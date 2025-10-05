@@ -61,10 +61,18 @@ export function SearchHistory({ onViewResults }: SearchHistoryProps) {
 
       const { data, error } = await query
 
-      if (error) throw error
+      if (error) {
+        console.error('Error loading searches:', error)
+        throw error
+      }
       setSearches(data || [])
-    } catch (error) {
-      console.error('Error loading searches:', error)
+    } catch (error: any) {
+      console.error('Error loading searches:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      })
     } finally {
       setLoading(false)
     }

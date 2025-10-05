@@ -117,6 +117,23 @@ export function Auth() {
                 </div>
               </div>
 
+              {isLogin && (
+                <div className="flex items-center gap-2 -mt-4">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="remember-me"
+                      type="checkbox"
+                      checked={true}
+                      disabled
+                      className="w-4 h-4 rounded border-slate-600/50 bg-slate-800/50 text-blue-600 focus:ring-2 focus:ring-blue-500/20 cursor-not-allowed opacity-50"
+                    />
+                  </div>
+                  <label htmlFor="remember-me" className="text-sm text-slate-300">
+                    Keep me signed in (always enabled)
+                  </label>
+                </div>
+              )}
+
               {error && (
                 <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-5 py-4 rounded-2xl text-sm backdrop-blur-sm">
                 {error}

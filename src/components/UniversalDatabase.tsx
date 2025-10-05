@@ -90,11 +90,19 @@ export function UniversalDatabase() {
         .eq('searches.user_id', user!.id)
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Error loading universal results:', error)
+        throw error
+      }
 
       setResults(data || [])
-    } catch (error) {
-      console.error('Error loading universal results:', error)
+    } catch (error: any) {
+      console.error('Error loading universal results:', {
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        code: error?.code
+      })
     } finally {
       setLoading(false)
     }
