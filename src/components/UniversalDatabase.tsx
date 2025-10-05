@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Database, Eye, Download } from 'lucide-react'
 import { supabase } from '../lib/supabase'
-import { useAuth } from '../hooks/useAuth'
 import { DatabaseFilters } from './database/DatabaseFilters'
 import { ColumnSelector } from './database/ColumnSelector'
 import { SortControls } from './database/SortControls'
@@ -52,7 +51,6 @@ const availableColumns = [
 ]
 
 export function UniversalDatabase() {
-  const { user } = useAuth()
   const [results, setResults] = useState<UniversalResult[]>([])
   const [loading, setLoading] = useState(true)
   const [sortField, setSortField] = useState<string>('')
@@ -61,16 +59,14 @@ export function UniversalDatabase() {
   const [filterKeywords, setFilterKeywords] = useState('')
   const [visibleColumns, setVisibleColumns] = useState<string[]>([
     'ad_library_url', 'ad_archive_id', 'store_name', 'page_profile_url', 'page_like_count', 'category',
-    'targeted_audience_country', 'starting_advertising_date', 'end_date', 'reach', 'spend', 
+    'targeted_audience_country', 'starting_advertising_date', 'end_date', 'reach', 'spend',
     'publisher_platform', 'cta_text', 'display_format', 'title', 'product_link', 'is_active', 'keywords_used'
   ])
   const [showColumnSelector, setShowColumnSelector] = useState(false)
 
   useEffect(() => {
-    if (user) {
-      loadAllResults()
-    }
-  }, [user])
+    loadAllResults()
+  }, [])
 
   const loadAllResults = async () => {
     setLoading(true)
@@ -87,11 +83,10 @@ export function UniversalDatabase() {
             user_id
           )
         `)
-        .eq('searches.user_id', user!.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      
+
       setResults(data || [])
     } catch (error) {
       console.error('Error loading universal results:', error)

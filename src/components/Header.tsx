@@ -1,8 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
-import { Eye, LogOut, User, BarChart3, Database } from 'lucide-react'
-import { useAuth } from '../hooks/useAuth'
-import { UserProfile } from './UserProfile'
+import { Eye, BarChart3, Database } from 'lucide-react'
 
 interface HeaderProps {
   activeTab: 'search' | 'history' | 'universal'
@@ -10,8 +7,6 @@ interface HeaderProps {
 }
 
 export function Header({ activeTab, onTabChange }: HeaderProps) {
-  const { user, signOut } = useAuth()
-  const [showProfile, setShowProfile] = useState(false)
 
   return (
     <>
@@ -68,28 +63,9 @@ export function Header({ activeTab, onTabChange }: HeaderProps) {
             </button>
           </nav>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setShowProfile(true)}
-              className="flex items-center gap-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-2xl px-4 py-2 transition-all duration-300"
-            >
-              <User className="w-5 h-5 text-slate-400" />
-              {user?.email}
-            </button>
-            <button
-              onClick={signOut}
-              className="p-3 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-2xl transition-all duration-300 border border-transparent hover:border-red-500/20"
-              title="Sign Out"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
         </div>
       </div>
     </header>
-    
-    {showProfile && <UserProfile onClose={() => setShowProfile(false)} />}
     </>
   )
 }
