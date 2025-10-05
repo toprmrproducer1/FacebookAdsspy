@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Eye, Loader2, ExternalLink, Globe, Hash, Target } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 
 interface SearchFormProps {
   onSearchStart: (searchId: string) => void
@@ -80,6 +81,7 @@ const countriesByRegion = {
 }
 
 export function SearchForm({ onSearchStart, onSearchComplete }: SearchFormProps) {
+  const { user } = useAuth()
   const [formData, setFormData] = useState({
     link: '',
     country: '',
@@ -91,16 +93,17 @@ export function SearchForm({ onSearchStart, onSearchComplete }: SearchFormProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!user) return
 
     setLoading(true)
     setError('')
 
     try {
-      // Create search record in database without user_id
+      // Create search record in database
       const { data: search, error: searchError } = await supabase
         .from('searches')
         .insert({
-          user_id: '00000000-0000-0000-0000-000000000000',
+          user_id: user.id,
           link: formData.link,
           country: formData.country,
           keywords_used: formData.keywords,
@@ -232,6 +235,7 @@ export function SearchForm({ onSearchStart, onSearchComplete }: SearchFormProps)
         const { data: searches } = await supabase
           .from('searches')
           .select('id')
+          .eq('user_id', user.id)
           .eq('status', 'pending')
           .order('created_at', { ascending: false })
           .limit(1)

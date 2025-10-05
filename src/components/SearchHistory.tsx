@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Clock, Search } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 import { HistoryFilters } from './history/HistoryFilters'
 import { HistoryItem } from './history/HistoryItem'
 import { SearchResultsTable } from './tables/SearchResultsTable'
@@ -23,6 +24,7 @@ interface SearchHistoryProps {
 }
 
 export function SearchHistory({ onViewResults }: SearchHistoryProps) {
+  const { user } = useAuth()
   const [searches, setSearches] = useState<SearchWithResults[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<'all' | 'completed' | 'pending' | 'failed'>('all')
@@ -33,8 +35,10 @@ export function SearchHistory({ onViewResults }: SearchHistoryProps) {
   const [expandedSearch, setExpandedSearch] = useState<string | null>(null)
 
   useEffect(() => {
-    loadSearches()
-  }, [filter, sortField, sortDirection])
+    if (user) {
+      loadSearches()
+    }
+  }, [user, filter, sortField, sortDirection])
 
   const loadSearches = async () => {
     setLoading(true)
@@ -45,6 +49,7 @@ export function SearchHistory({ onViewResults }: SearchHistoryProps) {
           *,
           search_results (*)
         `)
+        .eq('user_id', user!.id)
 
       if (filter !== 'all') {
         query = query.eq('status', filter)

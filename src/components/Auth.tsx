@@ -1,10 +1,8 @@
 import React, { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { Eye as EyeIcon, Loader2, Eye, EyeOff, Target, TrendingUp } from 'lucide-react'
-import { LandingPage } from './LandingPage'
+import { Eye as EyeIcon, Loader2, Eye, EyeOff } from 'lucide-react'
 
 export function Auth() {
-  const [showLanding, setShowLanding] = useState(true)
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,12 +16,11 @@ export function Auth() {
     setLoading(true)
     setError('')
 
-    const { error } = isLogin 
+    const { error } = isLogin
       ? await signIn(email, password)
       : await signUp(email, password)
 
     if (error) {
-      // Handle specific error cases with more helpful messages
       if (error.message.includes('User already registered') || error.message.includes('user_already_exists')) {
         setError('This email is already registered. Please sign in instead.')
         setIsLogin(true)
@@ -32,10 +29,6 @@ export function Auth() {
       }
     }
     setLoading(false)
-  }
-
-  if (showLanding) {
-    return <LandingPage onGetStarted={() => setShowLanding(false)} />
   }
 
   return (

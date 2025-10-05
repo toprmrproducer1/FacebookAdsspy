@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Database, Eye, Download } from 'lucide-react'
 import { supabase } from '../lib/supabase'
+import { useAuth } from '../hooks/useAuth'
 import { DatabaseFilters } from './database/DatabaseFilters'
 import { ColumnSelector } from './database/ColumnSelector'
 import { SortControls } from './database/SortControls'
@@ -51,6 +52,7 @@ const availableColumns = [
 ]
 
 export function UniversalDatabase() {
+  const { user } = useAuth()
   const [results, setResults] = useState<UniversalResult[]>([])
   const [loading, setLoading] = useState(true)
   const [sortField, setSortField] = useState<string>('')
@@ -65,8 +67,10 @@ export function UniversalDatabase() {
   const [showColumnSelector, setShowColumnSelector] = useState(false)
 
   useEffect(() => {
-    loadAllResults()
-  }, [])
+    if (user) {
+      loadAllResults()
+    }
+  }, [user])
 
   const loadAllResults = async () => {
     setLoading(true)
@@ -83,6 +87,7 @@ export function UniversalDatabase() {
             user_id
           )
         `)
+        .eq('searches.user_id', user!.id)
         .order('created_at', { ascending: false })
 
       if (error) throw error
